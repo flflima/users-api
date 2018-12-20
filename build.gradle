@@ -37,3 +37,13 @@ dependencies {
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
+
+clean.doFirst {
+    delete "${rootDir}/build/"
+    println "${rootDir}/build/"
+}
+
+war {
+    archiveName="users-api.war"
+    enabled=true
+}
