@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.dev.users.EmailCadastradoException;
 import br.com.dev.users.model.User;
 import br.com.dev.users.repository.UserRepository;
 import br.com.dev.users.service.UserService;
@@ -38,12 +39,15 @@ public class UsersController implements Serializable {
     public ResponseEntity<?> createUser(@RequestBody final User user) {
 	try {
 	    return new ResponseEntity<>(this.userService.criar(user), HttpStatus.CREATED);
-	} catch (final Exception e) {
-	    // TODO Auto-generated catch block
+	} catch (final EmailCadastradoException e) {
 	    e.printStackTrace();
 	    LOGGER.error("-- " + e);
+	    return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	} catch (final Exception e) {
+	    e.printStackTrace();
+	    LOGGER.error("-- " + e);
+	    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping
