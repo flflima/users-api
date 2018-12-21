@@ -2,6 +2,11 @@ package br.com.dev.users.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Phone implements Serializable {
 
     /**
@@ -9,8 +14,21 @@ public class Phone implements Serializable {
      */
     private static final long serialVersionUID = 4833085193795807532L;
 
+    @Id
+    @GeneratedValue
+    private Long id;
+
     private String number;
+
     private String ddd;
+
+    public Long getId() {
+	return id;
+    }
+
+    public void setId(Long id) {
+	this.id = id;
+    }
 
     public String getNumber() {
 	return number;
@@ -33,6 +51,7 @@ public class Phone implements Serializable {
 	final int prime = 31;
 	int result = 1;
 	result = prime * result + ((ddd == null) ? 0 : ddd.hashCode());
+	result = prime * result + ((id == null) ? 0 : id.hashCode());
 	result = prime * result + ((number == null) ? 0 : number.hashCode());
 	return result;
     }
@@ -51,6 +70,11 @@ public class Phone implements Serializable {
 		return false;
 	} else if (!ddd.equals(other.ddd))
 	    return false;
+	if (id == null) {
+	    if (other.id != null)
+		return false;
+	} else if (!id.equals(other.id))
+	    return false;
 	if (number == null) {
 	    if (other.number != null)
 		return false;
@@ -61,7 +85,7 @@ public class Phone implements Serializable {
 
     @Override
     public String toString() {
-	return "Phone [number=" + number + ", ddd=" + ddd + "]";
+	return "Phone [id=" + id + ", number=" + number + ", ddd=" + ddd + "]";
     }
 
 }

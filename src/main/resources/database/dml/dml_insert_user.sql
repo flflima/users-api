@@ -1,0 +1,1 @@
+INSERT INTO USER VALUES (1, 'João da Silva', 'joao@teste.com', 'senha123');
