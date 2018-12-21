@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.dev.users.EmailCadastradoException;
+import br.com.dev.users.exceptions.EmailCadastradoException;
 import br.com.dev.users.model.Phone;
 import br.com.dev.users.model.User;
 import br.com.dev.users.repository.UserRepository;

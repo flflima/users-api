@@ -1,4 +1,4 @@
-package br.com.dev.users;
+package br.com.dev.users.exceptions;
 
 public class UserException extends Exception {
 

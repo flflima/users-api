@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.dev.users.EmailCadastradoException;
+import br.com.dev.users.exceptions.EmailCadastradoException;
+import br.com.dev.users.exceptions.UserInvalidoException;
 import br.com.dev.users.model.User;
 import br.com.dev.users.repository.UserRepository;
+import br.com.dev.users.service.LoginService;
 import br.com.dev.users.service.UserService;
 
 @RestController
@@ -32,6 +34,9 @@ public class UsersController implements Serializable {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private LoginService loginService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
 
@@ -48,6 +53,23 @@ public class UsersController implements Serializable {
 	    LOGGER.error("-- " + e);
 	    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+    }
+    
+    @PostMapping(path = "/login")
+    public ResponseEntity<?> login(@RequestBody final User user) {
+	try {
+	    return new ResponseEntity<>(this.loginService.login(user), HttpStatus.CREATED);
+	} catch (final UserInvalidoException e) {
+	    e.printStackTrace();
+	    LOGGER.error("-- " + e);
+	    return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+	} catch (final Exception e) {
+	    e.printStackTrace();
+	    LOGGER.error("-- " + e);
+	    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	
     }
 
     @GetMapping
