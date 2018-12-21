@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.dev.users.model.User;
 import br.com.dev.users.repository.UserRepository;
+import br.com.dev.users.service.UserService;
 
 @RestController
 @RequestMapping(path = "users")
@@ -24,17 +25,25 @@ public class UsersController implements Serializable {
      * 
      */
     private static final long serialVersionUID = 735349405022822627L;
-    
+
     @Autowired
     private UserRepository userDAO;
+
+    @Autowired
+    private UserService userService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody final User user) {
-	LOGGER.debug("User added!");
-	LOGGER.debug("{}", user);
-	return new ResponseEntity<>(userDAO.save(user), HttpStatus.CREATED);
+	try {
+	    return new ResponseEntity<>(this.userService.criar(user), HttpStatus.CREATED);
+	} catch (final Exception e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	    LOGGER.error("-- " + e);
+	}
+	return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping
@@ -43,5 +52,4 @@ public class UsersController implements Serializable {
 	return new ResponseEntity<>(this.userDAO.findAll(), HttpStatus.OK);
     }
 
-    
 }

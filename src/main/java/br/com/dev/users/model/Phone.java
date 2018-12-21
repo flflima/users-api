@@ -3,7 +3,6 @@ package br.com.dev.users.model;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
@@ -15,18 +14,19 @@ public class Phone implements Serializable {
     private static final long serialVersionUID = 4833085193795807532L;
 
     @Id
-    @GeneratedValue
-    private Long id;
+//    @GeneratedValue
+//    private Long id;
+    private String id;
 
     private String number;
 
     private String ddd;
 
-    public Long getId() {
+    public String getId() {
 	return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
 	this.id = id;
     }
 

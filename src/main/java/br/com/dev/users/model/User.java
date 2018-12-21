@@ -1,11 +1,11 @@
 package br.com.dev.users.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
@@ -18,8 +18,9 @@ public class User implements Serializable {
     private static final long serialVersionUID = 4046208443375325325L;
 
     @Id
-    @GeneratedValue
-    private Long id;
+//    @GeneratedValue
+//    private Long id;
+    private String id;
 
     private String name;
 
@@ -27,14 +28,22 @@ public class User implements Serializable {
 
     private String password;
 
+    private Date created;
+
+    private Date modified;
+
+    private Date lastLogin;
+
+    private String token;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Phone> phones;
 
-    public Long getId() {
+    public String getId() {
 	return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
 	this.id = id;
     }
 
@@ -62,6 +71,38 @@ public class User implements Serializable {
 	this.password = password;
     }
 
+    public Date getCreated() {
+	return created;
+    }
+
+    public void setCreated(Date created) {
+	this.created = created;
+    }
+
+    public Date getModified() {
+	return modified;
+    }
+
+    public void setModified(Date modified) {
+	this.modified = modified;
+    }
+
+    public Date getLastLogin() {
+	return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+	this.lastLogin = lastLogin;
+    }
+
+    public String getToken() {
+	return token;
+    }
+
+    public void setToken(String token) {
+	this.token = token;
+    }
+
     public List<Phone> getPhones() {
 	return phones;
     }
@@ -74,11 +115,15 @@ public class User implements Serializable {
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
+	result = prime * result + ((created == null) ? 0 : created.hashCode());
 	result = prime * result + ((email == null) ? 0 : email.hashCode());
 	result = prime * result + ((id == null) ? 0 : id.hashCode());
+	result = prime * result + ((lastLogin == null) ? 0 : lastLogin.hashCode());
+	result = prime * result + ((modified == null) ? 0 : modified.hashCode());
 	result = prime * result + ((name == null) ? 0 : name.hashCode());
 	result = prime * result + ((password == null) ? 0 : password.hashCode());
 	result = prime * result + ((phones == null) ? 0 : phones.hashCode());
+	result = prime * result + ((token == null) ? 0 : token.hashCode());
 	return result;
     }
 
@@ -91,6 +136,11 @@ public class User implements Serializable {
 	if (getClass() != obj.getClass())
 	    return false;
 	User other = (User) obj;
+	if (created == null) {
+	    if (other.created != null)
+		return false;
+	} else if (!created.equals(other.created))
+	    return false;
 	if (email == null) {
 	    if (other.email != null)
 		return false;
@@ -100,6 +150,16 @@ public class User implements Serializable {
 	    if (other.id != null)
 		return false;
 	} else if (!id.equals(other.id))
+	    return false;
+	if (lastLogin == null) {
+	    if (other.lastLogin != null)
+		return false;
+	} else if (!lastLogin.equals(other.lastLogin))
+	    return false;
+	if (modified == null) {
+	    if (other.modified != null)
+		return false;
+	} else if (!modified.equals(other.modified))
 	    return false;
 	if (name == null) {
 	    if (other.name != null)
@@ -116,12 +176,18 @@ public class User implements Serializable {
 		return false;
 	} else if (!phones.equals(other.phones))
 	    return false;
+	if (token == null) {
+	    if (other.token != null)
+		return false;
+	} else if (!token.equals(other.token))
+	    return false;
 	return true;
     }
 
     @Override
     public String toString() {
-	return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", phones="
+	return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", created="
+		+ created + ", modified=" + modified + ", lastLogin=" + lastLogin + ", token=" + token + ", phones="
 		+ phones + "]";
     }
 
