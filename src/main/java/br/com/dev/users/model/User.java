@@ -8,6 +8,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class User implements Serializable {
@@ -28,10 +30,13 @@ public class User implements Serializable {
 
     private String password;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modified;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date lastLogin;
 
     private String token;
