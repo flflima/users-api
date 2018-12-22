@@ -39,13 +39,42 @@ public class LoginService implements Serializable {
     @Autowired
     private UserRepository userDAO;
 
-    @Transactional(rollbackFor = { Exception.class })
     public User login(final User user) throws UserInvalidoException {
+	LOGGER.debug("Iniciando login do usuário");
 
+	User userRetorno = validarEmailPasswordExistente(user);
+
+	if (userRetorno != null) {
+	    return userRetorno;
+	} else {
+	    userRetorno = validarEmailExistente(user);
+
+	    if (userRetorno != null) {
+		// Caso o e-mail exista mas a senha não bata, retornar o status apropriado 401
+		// mais a mensagem "Usuário e/ou senha inválidos"
+		if (!StringUtils.equals(user.getPassword(), userRetorno.getPassword())) {
+		    LOGGER.error("Email válido, senha inválida");
+		    throw new UserInvalidoException("Usuário e/ou senha inválidos");
+		}
+
+		LOGGER.debug("Email e senha válidos");
+		registrarUltimoLogin(userRetorno);
+		return userRetorno;
+	    } else {
+		// Caso o e-mail não exista, retornar erro com status apropriado mais a mensagem
+		// "Usuário e/ou senha inválidos"
+		LOGGER.error("Email não localizado");
+		throw new UserInvalidoException("Usuário e/ou senha inválidos");
+	    }
+	}
+
+    }
+
+    private User validarEmailPasswordExistente(final User user) {
+	LOGGER.debug("Validar email e senha");
 	final CriteriaBuilder builder = this.em.getCriteriaBuilder();
 	final CriteriaQuery<User> query = builder.createQuery(User.class);
 	final Root<User> root = query.from(User.class);
-
 	final List<Predicate> predicates = new ArrayList<>();
 
 	// Caso o e-mail e a senha correspondam a um usuário existente, retornar igual
@@ -58,40 +87,37 @@ public class LoginService implements Serializable {
 	final List<User> resultList = this.em.createQuery(query.select(root)).getResultList();
 
 	if (resultList.size() > 0) {
-	    final User userRetorno = resultList.get(0);
-	    userRetorno.setLastLogin(new Date());
-	    return this.userDAO.save(userRetorno);
+	    LOGGER.debug("Email e senha válidos");
+	    return registrarUltimoLogin(resultList.get(0));
+	} else {
+	    return null;
 	}
+    }
 
-	// se usuario e senha não encontrados, validar as informações
+    private User validarEmailExistente(final User user) {
+	LOGGER.debug("Validar email");
+	final CriteriaBuilder builder = this.em.getCriteriaBuilder();
+	final CriteriaQuery<User> query = builder.createQuery(User.class);
+	final Root<User> root = query.from(User.class);
+	final List<Predicate> predicates = new ArrayList<>();
 
-	predicates.clear();
 	predicates.add(builder.equal(root.get("email"), user.getEmail()));
 	query.where(builder.equal(root.get("email"), user.getEmail()));
 
-	final List<User> resultList2 = this.em.createQuery(query.select(root)).getResultList();
+	final List<User> resultList = this.em.createQuery(query.select(root)).getResultList();
 
-	if (resultList2.size() > 0) {
-	    // Caso o e-mail exista mas a senha não bata, retornar o status apropriado 401
-	    // mais a mensagem "Usuário e/ou senha inválidos"
-	    final User userEmailValido = resultList2.get(0);
-
-	    if (!StringUtils.equals(user.getPassword(), userEmailValido.getPassword())) {
-		// Caso o e-mail exista mas a senha não bata, retornar o status apropriado 401
-		// mais a mensagem "Usuário e/ou senha inválidos"
-		throw new UserInvalidoException("Usuário e/ou senha inválidos");
-	    }
+	if (resultList.size() > 0) {
+	    LOGGER.debug("Email válido");
+	    return resultList.get(0);
 	} else {
-	    // Caso o e-mail não exista, retornar erro com status apropriado mais a mensagem
-	    // "Usuário e/ou senha inválidos"
-	    throw new UserInvalidoException("Usuário e/ou senha inválidos");
+	    return null;
 	}
+    }
 
-	return resultList.get(0);
-//	
-//	if (this.em.createQuery(query.select(root)).getResultList().size() > 0) {
-//	    throw new EmailCadastradoException("E-mail já existente");
-//	}
-//	return null;
+    @Transactional(rollbackFor = { Exception.class })
+    private User registrarUltimoLogin(final User user) {
+	LOGGER.debug("Registrar data de último login");
+	user.setLastLogin(new Date());
+	return this.userDAO.save(user);
     }
 }
