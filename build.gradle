@@ -55,9 +55,4 @@ task copyToLib(type: Copy) {
     from(configurations.compile)
 }
 
-stage.dependsOn(copyToLib)task copyToLib(type: Copy) {
-    into "$buildDir/lib"
-    from(configurations.compile)
-}
-
 stage.dependsOn(copyToLib)
