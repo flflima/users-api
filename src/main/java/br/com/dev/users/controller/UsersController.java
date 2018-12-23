@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.dev.users.exceptions.CampoInvalidoException;
 import br.com.dev.users.exceptions.EmailCadastradoException;
 import br.com.dev.users.exceptions.SessaoInvalidaException;
 import br.com.dev.users.exceptions.UserInvalidoException;
@@ -50,16 +51,20 @@ public class UsersController implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody final User user) {
+    public ResponseEntity<?> createUser(@RequestBody(required = true) final User user) {
 	try {
 	    return new ResponseEntity<>(this.userService.criar(user), HttpStatus.CREATED);
 	} catch (final EmailCadastradoException e) {
 	    e.printStackTrace();
-	    LOGGER.error("-- " + e);
+	    LOGGER.error(" " + e);
+	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+	} catch (final CampoInvalidoException e) {
+	    e.printStackTrace();
+	    LOGGER.error(" " + e);
 	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	} catch (final Exception e) {
 	    e.printStackTrace();
-	    LOGGER.error("-- " + e);
+	    LOGGER.error(" " + e);
 	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
     }
@@ -70,11 +75,11 @@ public class UsersController implements Serializable {
 	    return new ResponseEntity<>(this.loginService.login(user), HttpStatus.CREATED);
 	} catch (final UserInvalidoException e) {
 	    e.printStackTrace();
-	    LOGGER.error("-- " + e);
+	    LOGGER.error(" " + e);
 	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.UNAUTHORIZED);
 	} catch (final Exception e) {
 	    e.printStackTrace();
-	    LOGGER.error("-- " + e);
+	    LOGGER.error(" " + e);
 	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
     }
@@ -86,15 +91,15 @@ public class UsersController implements Serializable {
 	    return new ResponseEntity<>(this.perfilUserService.getPerfilUser(id, request), HttpStatus.CREATED);
 	} catch (final SessaoInvalidaException e) {
 	    e.printStackTrace();
-	    LOGGER.error("-- " + e);
+	    LOGGER.error(" " + e);
 	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.UNAUTHORIZED);
 	} catch (final UserInvalidoException e) {
 	    e.printStackTrace();
-	    LOGGER.error("-- " + e);
+	    LOGGER.error(" " + e);
 	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.UNAUTHORIZED);
 	} catch (final Exception e) {
 	    e.printStackTrace();
-	    LOGGER.error("-- " + e);
+	    LOGGER.error(" " + e);
 	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
     }

@@ -15,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.dev.users.exceptions.CampoInvalidoException;
 import br.com.dev.users.exceptions.EmailCadastradoException;
 import br.com.dev.users.model.Phone;
 import br.com.dev.users.model.User;
 import br.com.dev.users.repository.UserRepository;
 import br.com.dev.users.utilities.Utils;
+import br.com.dev.users.validators.UserValidator;
 
 @Service
 public class UserService implements Serializable {
@@ -36,10 +38,18 @@ public class UserService implements Serializable {
 
     @Autowired
     private UserRepository userDAO;
+    
+    @Autowired
+    private UserValidator userValidator;
 
-    public User criar(final User user) throws EmailCadastradoException {
+    public User criar(final User user) throws EmailCadastradoException, CampoInvalidoException {
+	validarCamposObrigatorios(user);
 	validarEmailJaCadastrado(user);
 	return persistirUsuario(user);
+    }
+
+    private void validarCamposObrigatorios(final User user) throws CampoInvalidoException {
+	this.userValidator.validarUser(user);
     }
 
     @Transactional(rollbackFor = { Exception.class })

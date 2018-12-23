@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Phone implements Serializable {
@@ -14,8 +15,7 @@ public class Phone implements Serializable {
     private static final long serialVersionUID = 4833085193795807532L;
 
     @Id
-//    @GeneratedValue
-//    private Long id;
+    @NotNull
     private String id;
 
     private String number;

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class User implements Serializable {
@@ -20,8 +21,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = 4046208443375325325L;
 
     @Id
-//    @GeneratedValue
-//    private Long id;
+    @NotNull
     private String id;
 
     private String name;
