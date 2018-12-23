@@ -3,7 +3,7 @@ Users creation API
 
 #### Endpoints:
 
-###### POST - Criar usuários
+##### POST - Criar usuários
 
 	http://localhost:8080/users
 	
