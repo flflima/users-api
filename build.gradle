@@ -50,9 +50,3 @@ war {
     enabled=true
 }
 
-task copyToLib(type: Copy) {
-    into "$buildDir/lib"
-    from(configurations.compile)
-}
-
-stage.dependsOn(copyToLib)
