@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.dev.users.exceptions.UserInvalidoException;
 import br.com.dev.users.model.User;
 import br.com.dev.users.repository.UserRepository;
+import br.com.dev.users.utilities.Utils;
 
 @Service
 public class LoginService implements Serializable {
@@ -52,7 +53,7 @@ public class LoginService implements Serializable {
 	    if (userRetorno != null) {
 		// Caso o e-mail exista mas a senha não bata, retornar o status apropriado 401
 		// mais a mensagem "Usuário e/ou senha inválidos"
-		if (!StringUtils.equals(user.getPassword(), userRetorno.getPassword())) {
+		if (!StringUtils.equals(Utils.encrypt(user.getPassword()), userRetorno.getPassword())) {
 		    LOGGER.error("Email válido, senha inválida");
 		    throw new UserInvalidoException("Usuário e/ou senha inválidos");
 		}

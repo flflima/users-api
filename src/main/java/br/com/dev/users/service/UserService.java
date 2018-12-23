@@ -54,6 +54,9 @@ public class UserService implements Serializable {
     private User popularUser(final User user) {
 	LOGGER.debug("Gerando ID para User");
 	user.setId(Utils.getUUID());
+	
+	LOGGER.debug("Gerando HASH da senha");
+	user.setPassword(Utils.encrypt(user.getPassword()));
 
 	LOGGER.debug("Populando campos do user");
 	final Date data = new Date();
