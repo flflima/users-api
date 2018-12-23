@@ -45,6 +45,16 @@ public class User implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Phone> phones = new ArrayList<>();
 
+    public User() {
+	super();
+    }
+
+    public User(final String email, final String password) {
+	super();
+	this.email = email;
+	this.password = password;
+    }
+
     public String getId() {
 	return id;
     }

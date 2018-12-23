@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import br.com.dev.users.exceptions.SessaoInvalidaException;
@@ -32,8 +34,6 @@ public class PerfilUserService implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PerfilUserService.class);
 
-    private static final String AUTHORIZATION_HEADER = "authorization";
-
     private static final int TIME_LIMIT_IN_MINUTES = 30;
 
     @PersistenceContext
@@ -44,7 +44,7 @@ public class PerfilUserService implements Serializable {
 
     public User getPerfilUser(final String id, final HttpServletRequest request)
 	    throws UserInvalidoException, SessaoInvalidaException {
-	final String authToken = request.getHeader(AUTHORIZATION_HEADER);
+	final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 	LOGGER.debug("Validando Token");
 
 	if (authToken != null && authToken.contains("Bearer ")) {
@@ -53,12 +53,17 @@ public class PerfilUserService implements Serializable {
 
 	    LOGGER.debug("Token localizado no HEADER");
 
-	    final User user = this.userDAO.getOne(id);
-	    LOGGER.debug("Usuário localizado");
+	    final Optional<User> user = this.userDAO.findById(id);
 
-	    final String token = authToken.replaceAll("Bearer ", "");
+	    if (user.isPresent()) {
+		LOGGER.debug("Usuário localizado");
+		final String token = authToken.replaceAll("Bearer ", "");
+		return validarTokenUsuarioESessao(user.get(), token);
+	    } else {
+		LOGGER.debug("Usuário com id {} não foi encontrado", id);
+		throw new UserInvalidoException("Usuário não encontrado");
+	    }
 
-	    return validarTokenUsuarioESessao(user, token);
 	} else {
 	    // Caso o token não exista, retornar erro com status apropriado com a mensagem
 	    // "Não autorizado".
@@ -111,7 +116,12 @@ public class PerfilUserService implements Serializable {
 	final LocalDateTime lastLoginAsLocalDateTime = user.getLastLogin().toInstant().atZone(ZoneId.systemDefault())
 		.toLocalDateTime();
 
+	LOGGER.debug("Agora {}", agora);
+	LOGGER.debug("Ultimo Login {}", lastLoginAsLocalDateTime);
+
 	final Duration duration = Duration.between(agora, lastLoginAsLocalDateTime);
+
+	LOGGER.debug("Diferença entre minutos em relação ao último login: {}", Math.abs(duration.toMinutes()));
 	return Math.abs(duration.toMinutes()) <= TIME_LIMIT_IN_MINUTES;
     }
 }
