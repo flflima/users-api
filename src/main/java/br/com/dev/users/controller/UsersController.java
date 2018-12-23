@@ -20,6 +20,7 @@ import br.com.dev.users.exceptions.EmailCadastradoException;
 import br.com.dev.users.exceptions.SessaoInvalidaException;
 import br.com.dev.users.exceptions.UserInvalidoException;
 import br.com.dev.users.model.User;
+import br.com.dev.users.model.messages.MensagemRetorno;
 import br.com.dev.users.repository.UserRepository;
 import br.com.dev.users.service.LoginService;
 import br.com.dev.users.service.PerfilUserService;
@@ -55,11 +56,11 @@ public class UsersController implements Serializable {
 	} catch (final EmailCadastradoException e) {
 	    e.printStackTrace();
 	    LOGGER.error("-- " + e);
-	    return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	} catch (final Exception e) {
 	    e.printStackTrace();
 	    LOGGER.error("-- " + e);
-	    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
     }
 
@@ -70,11 +71,11 @@ public class UsersController implements Serializable {
 	} catch (final UserInvalidoException e) {
 	    e.printStackTrace();
 	    LOGGER.error("-- " + e);
-	    return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.UNAUTHORIZED);
 	} catch (final Exception e) {
 	    e.printStackTrace();
 	    LOGGER.error("-- " + e);
-	    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
     }
 
@@ -86,15 +87,15 @@ public class UsersController implements Serializable {
 	} catch (final SessaoInvalidaException e) {
 	    e.printStackTrace();
 	    LOGGER.error("-- " + e);
-	    return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.UNAUTHORIZED);
 	} catch (final UserInvalidoException e) {
 	    e.printStackTrace();
 	    LOGGER.error("-- " + e);
-	    return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.UNAUTHORIZED);
 	} catch (final Exception e) {
 	    e.printStackTrace();
 	    LOGGER.error("-- " + e);
-	    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    return new ResponseEntity<>(new MensagemRetorno(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
     }
 
