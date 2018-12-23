@@ -1,21 +1,21 @@
 # users-api
 Users creation API
 
-####Endpoints:
+#### Endpoints:
 
-######POST - Criar usuários
+###### POST - Criar usuários
 
 	http://localhost:8080/users
 	
 	https://users-api-cs.herokuapp.com/users
 
-#####POST - Login usuários
+##### POST - Login usuários
 
 	http://localhost:8080/users/login
 	
 	https://users-api-cs.herokuapp.com/users/login
 
-#####POST - Perfil usuários
+##### POST - Perfil usuários
 
 	http://localhost:8080/users/login/{id}
 	
