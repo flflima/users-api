@@ -81,7 +81,7 @@ public class LoginService implements Serializable {
 	// Caso o e-mail e a senha correspondam a um usuário existente, retornar igual
 	// ao endpoint de Criação.
 	predicates.add(builder.equal(root.get("email"), user.getEmail()));
-	predicates.add(builder.equal(root.get("password"), user.getPassword()));
+	predicates.add(builder.equal(root.get("password"), Utils.encrypt(user.getPassword())));
 
 	query.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));
 

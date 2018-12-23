@@ -1,6 +1,7 @@
 package br.com.dev.users.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class User implements Serializable {
     private String token;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Phone> phones;
+    private List<Phone> phones = new ArrayList<>();
 
     public String getId() {
 	return id;
