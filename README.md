@@ -21,6 +21,6 @@ Users creation API
 	
 	https://users-api-cs.herokuapp.com/users/login/{id}
 
-	<b>onde {id} é o id do usuário</b>
+- onde **{id}** é o id do usuário
 	
-	<b>* necessário enviar token de autorização no HEADER da requisição: -H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiMjE5ZjlmOC0yYWNiLTQzMTItYTJhYS00ZTEwMzhlYzQ0NTEifQ.l25tcNiCZqetjKuQZlPKFhhw7QaLD_THEgI1d6hcsUBplmmoGmweyWK_EapyqTuFzICA2SBN39bcTZV9qABbdQ'</b>
+- necessário enviar token de autorização no HEADER da requisição: **-H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiMjE5ZjlmOC0yYWNiLTQzMTItYTJhYS00ZTEwMzhlYzQ0NTEifQ.l25tcNiCZqetjKuQZlPKFhhw7QaLD_THEgI1d6hcsUBplmmoGmweyWK_EapyqTuFzICA2SBN39bcTZV9qABbdQ'**
