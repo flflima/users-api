@@ -50,6 +50,12 @@ public class UsersController implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
 
+    /**
+     * Endpoint para criação de Users.
+     * 
+     * @param user
+     * @return {@link ResponseEntity}
+     */
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody(required = true) final User user) {
 	try {
@@ -69,6 +75,12 @@ public class UsersController implements Serializable {
 	}
     }
 
+    /**
+     * Endpoint para o login de Users.
+     * 
+     * @param user
+     * @return {@link ResponseEntity}
+     */
     @PostMapping(path = "/login")
     public ResponseEntity<?> login(@RequestBody final User user) {
 	try {
@@ -84,6 +96,14 @@ public class UsersController implements Serializable {
 	}
     }
 
+    /**
+     * Endpoint para visualização do perfil de user.
+     * 
+     * @param id
+     * @param request
+     * @return {@link ResponseEntity}
+     * @throws {@link InterruptedException}
+     */
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> perfilUsuario(@PathVariable(value = "id", required = true) final String id,
 	    final HttpServletRequest request) throws InterruptedException {

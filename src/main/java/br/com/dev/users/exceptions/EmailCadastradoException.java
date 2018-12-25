@@ -1,5 +1,11 @@
 package br.com.dev.users.exceptions;
 
+/**
+ * Exceção lançada quando um e-mail já tiver sido cadastrado
+ * 
+ * @author felipe
+ *
+ */
 public class EmailCadastradoException extends Exception {
 
     /**

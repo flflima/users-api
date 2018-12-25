@@ -1,5 +1,11 @@
 package br.com.dev.users.exceptions;
 
+/**
+ * Exceção lançada ao encontrar algum campo com valor inválido
+ * 
+ * @author felipe
+ *
+ */
 public class CampoInvalidoException extends Exception {
 
     /**

@@ -1,6 +1,12 @@
 # users-api
 Users creation API
 
+#### Para executar localmente
+
+	A partir do diretório raiz:
+	
+	gradle bootRun
+
 #### Endpoints:
 
 ##### POST - Criar usuários

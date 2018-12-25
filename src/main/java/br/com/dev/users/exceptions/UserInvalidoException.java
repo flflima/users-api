@@ -1,5 +1,11 @@
 package br.com.dev.users.exceptions;
 
+/**
+ * Exceção lançada quando user inválido
+ * 
+ * @author felipe
+ *
+ */
 public class UserInvalidoException extends Exception {
 
     /**

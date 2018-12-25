@@ -42,28 +42,22 @@ public class PerfilUserService implements Serializable {
     @Autowired
     private UserRepository userDAO;
 
+    /**
+     * Recupera perfil do user
+     * 
+     * @param id
+     * @param request
+     * @return {@link User}
+     * @throws UserInvalidoException
+     * @throws SessaoInvalidaException
+     */
     public User getPerfilUser(final String id, final HttpServletRequest request)
 	    throws UserInvalidoException, SessaoInvalidaException {
 	final String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-	LOGGER.debug("Validando Token");
+	LOGGER.debug("Analisando Token");
 
 	if (authToken != null && authToken.contains("Bearer ")) {
-	    // Caso o token exista, buscar o usuário pelo id passado no path e comparar se o
-	    // token no modelo é igual ao token passado no header.
-
-	    LOGGER.debug("Token localizado no HEADER");
-
-	    final Optional<User> user = this.userDAO.findById(id);
-
-	    if (user.isPresent()) {
-		LOGGER.debug("Usuário localizado");
-		final String token = authToken.replaceAll("Bearer ", "");
-		return validarTokenUsuarioESessao(user.get(), token);
-	    } else {
-		LOGGER.debug("Usuário com id {} não foi encontrado", id);
-		throw new UserInvalidoException("Usuário não encontrado");
-	    }
-
+	    return recuperarValidarToken(id, authToken);
 	} else {
 	    // Caso o token não exista, retornar erro com status apropriado com a mensagem
 	    // "Não autorizado".
@@ -73,6 +67,42 @@ public class PerfilUserService implements Serializable {
 	}
     }
 
+    /**
+     * Caso o token exista, buscar o usuário pelo id passado no path e comparar se o
+     * token no modelo é igual ao token passado no header.
+     * 
+     * @param id
+     * @param authToken
+     * @return {@link User}
+     * @throws SessaoInvalidaException
+     * @throws UserInvalidoException
+     */
+    private User recuperarValidarToken(final String id, final String authToken)
+	    throws SessaoInvalidaException, UserInvalidoException {
+	LOGGER.debug("Token localizado no HEADER");
+
+	final Optional<User> user = this.userDAO.findById(id);
+
+	if (user.isPresent()) {
+	    LOGGER.debug("Usuário localizado");
+	    final String token = authToken.replaceAll("Bearer ", "");
+	    return validarTokenUsuarioESessao(user.get(), token);
+	} else {
+	    LOGGER.debug("Usuário com id {} não foi encontrado", id);
+	    throw new UserInvalidoException("Usuário não encontrado");
+	}
+    }
+
+    /**
+     * Caso não seja a MENOS que 30 minutos atrás, retornar erro com status
+     * apropriado com mensagem "Sessão inválida".
+     * 
+     * @param user
+     * @param token
+     * @return {@link User}
+     * @throws SessaoInvalidaException
+     * @throws UserInvalidoException
+     */
     private User validarTokenUsuarioESessao(final User user, final String token)
 	    throws SessaoInvalidaException, UserInvalidoException {
 	LOGGER.debug("Validando Token recebido com Token do usuário");
@@ -80,19 +110,21 @@ public class PerfilUserService implements Serializable {
 	if (tokenValido(user, token)) {
 	    return validarSessaoEAtualizarUsuario(user);
 	} else {
-	    // Caso não seja a MENOS que 30 minutos atrás, retornar erro com
-	    // status apropriado com mensagem "Sessão inválida".
-
 	    LOGGER.debug("Token recebido no HEADER diferente do usuário localizado");
 	    throw new UserInvalidoException("Não Autorizado");
 	}
     }
 
+    /**
+     * Caso seja o mesmo token, verificar se o último login foi a MENOS que 30
+     * minutos atrás.
+     * 
+     * @param user
+     * @return {@link User}
+     * @throws SessaoInvalidaException
+     */
     @Transactional(rollbackOn = { Exception.class })
     private User validarSessaoEAtualizarUsuario(final User user) throws SessaoInvalidaException {
-	// Caso seja o mesmo token, verificar se o último login foi a MENOS que 30
-	// minutos atrás.
-
 	LOGGER.debug("Token recebido e do usuário estão válidos");
 	final LocalDateTime agora = LocalDateTime.now();
 
@@ -108,10 +140,24 @@ public class PerfilUserService implements Serializable {
 	}
     }
 
+    /**
+     * Compara token recebido com o token do {@link User} localizado
+     * 
+     * @param user
+     * @param token
+     * @return boolean
+     */
     private boolean tokenValido(final User user, final String token) {
 	return StringUtils.equals(token, user.getToken());
     }
 
+    /**
+     * Valida se o tempo atual está dentro do TIME_LIMIT_IN_MINUTES
+     * 
+     * @param agora
+     * @param user
+     * @return boolean
+     */
     private boolean sessaoValida(final LocalDateTime agora, final User user) {
 	final LocalDateTime lastLoginAsLocalDateTime = user.getLastLogin().toInstant().atZone(ZoneId.systemDefault())
 		.toLocalDateTime();

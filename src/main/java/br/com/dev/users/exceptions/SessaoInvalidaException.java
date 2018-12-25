@@ -1,5 +1,11 @@
 package br.com.dev.users.exceptions;
 
+/**
+ * Exceção lançada quando uma sessão não for válida
+ * 
+ * @author felipe
+ *
+ */
 public class SessaoInvalidaException extends Exception {
 
     /**

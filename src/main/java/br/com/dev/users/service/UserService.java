@@ -38,33 +38,76 @@ public class UserService implements Serializable {
 
     @Autowired
     private UserRepository userDAO;
-    
+
     @Autowired
     private UserValidator userValidator;
 
+    /**
+     * Cria um user
+     * 
+     * @param user
+     * @return {@link User}
+     * @throws EmailCadastradoException
+     * @throws CampoInvalidoException
+     */
     public User criar(final User user) throws EmailCadastradoException, CampoInvalidoException {
 	validarCamposObrigatorios(user);
 	validarEmailJaCadastrado(user);
 	return persistirUsuario(user);
     }
 
+    /**
+     * Valida se os campos de e-mail e password foram recebidos
+     * 
+     * @param user
+     * @throws CampoInvalidoException
+     */
     private void validarCamposObrigatorios(final User user) throws CampoInvalidoException {
 	this.userValidator.validarUser(user);
     }
 
+    /**
+     * Valida se e-mail já foi cadastrado
+     * 
+     * @param user
+     * @throws EmailCadastradoException
+     */
+    private void validarEmailJaCadastrado(final User user) throws EmailCadastradoException {
+	LOGGER.debug("Validando se e-mail '{}' já está cadastrado", user.getEmail());
+
+	final CriteriaBuilder builder = this.em.getCriteriaBuilder();
+	final CriteriaQuery<User> query = builder.createQuery(User.class);
+	final Root<User> root = query.from(User.class);
+	query.where(builder.equal(root.get("email"), user.getEmail()));
+
+	if (this.em.createQuery(query.select(root)).getResultList().size() > 0) {
+	    throw new EmailCadastradoException("E-mail já existente");
+	}
+    }
+
+    /**
+     * Popula {@link User} e persiste no banco de dados
+     * 
+     * @param user
+     * @return {@link User}
+     */
     @Transactional(rollbackFor = { Exception.class })
     private User persistirUsuario(final User user) {
 	final User userPopulado = popularUser(user);
-
 	LOGGER.debug("User {} added!", userPopulado);
-
 	return this.userDAO.save(userPopulado);
     }
 
+    /**
+     * Popula {@link User}
+     * 
+     * @param user
+     * @return {@link User}
+     */
     private User popularUser(final User user) {
 	LOGGER.debug("Gerando ID para User");
 	user.setId(Utils.getUUID());
-	
+
 	LOGGER.debug("Gerando HASH da senha");
 	user.setPassword(Utils.encrypt(user.getPassword()));
 
@@ -80,18 +123,5 @@ public class UserService implements Serializable {
 	}
 
 	return user;
-    }
-
-    private void validarEmailJaCadastrado(final User user) throws EmailCadastradoException {
-	LOGGER.debug("Validando se e-mail '{}' já está cadastrado", user.getEmail());
-
-	final CriteriaBuilder builder = this.em.getCriteriaBuilder();
-	final CriteriaQuery<User> query = builder.createQuery(User.class);
-	final Root<User> root = query.from(User.class);
-	query.where(builder.equal(root.get("email"), user.getEmail()));
-
-	if (this.em.createQuery(query.select(root)).getResultList().size() > 0) {
-	    throw new EmailCadastradoException("E-mail já existente");
-	}
     }
 }

@@ -2,6 +2,12 @@ package br.com.dev.users.model.messages;
 
 import java.io.Serializable;
 
+/**
+ * Modelo para mensagem de retorno, em caso de erro
+ * 
+ * @author felipe
+ *
+ */
 public class MensagemRetorno implements Serializable {
 
     /**

@@ -51,15 +51,19 @@ public class UserServiceTest {
 	userService.criar(user2);
     }
     
+    @Test
     public void testCriarUser() throws EmailCadastradoException, CampoInvalidoException {
 	User user = new User();
-	user.setEmail("teste@teste.com.br");
+	user.setEmail("teste@teste2.com.br");
 	user.setPassword("senha123");
 	user.setPhones(new ArrayList<>());
 	
 	user = userService.criar(user);
+	User user2 = userDAO.findById(user.getId()).get();
 	
-	assertEquals(userDAO.findById(user.getId()), user);
+	assertEquals(user2.getId(), user.getId());
+	assertEquals(user2.getEmail(), user.getEmail());
+	assertEquals(user2.getPassword(), user.getPassword());
     }
 
 }

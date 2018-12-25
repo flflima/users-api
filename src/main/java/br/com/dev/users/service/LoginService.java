@@ -40,6 +40,13 @@ public class LoginService implements Serializable {
     @Autowired
     private UserRepository userDAO;
 
+    /**
+     * Valida e persiste login do user.
+     * 
+     * @param user
+     * @return {@link User}
+     * @throws UserInvalidoException
+     */
     public User login(final User user) throws UserInvalidoException {
 	LOGGER.debug("Iniciando login do usuário");
 
@@ -49,28 +56,20 @@ public class LoginService implements Serializable {
 	    return userRetorno;
 	} else {
 	    userRetorno = validarEmailExistente(user);
-
-	    if (userRetorno != null) {
-		// Caso o e-mail exista mas a senha não bata, retornar o status apropriado 401
-		// mais a mensagem "Usuário e/ou senha inválidos"
-		if (!StringUtils.equals(Utils.encrypt(user.getPassword()), userRetorno.getPassword())) {
-		    LOGGER.error("Email válido, senha inválida");
-		    throw new UserInvalidoException("Usuário e/ou senha inválidos");
-		}
-
-		LOGGER.debug("Email e senha válidos");
-		registrarUltimoLogin(userRetorno);
-		return userRetorno;
-	    } else {
-		// Caso o e-mail não exista, retornar erro com status apropriado mais a mensagem
-		// "Usuário e/ou senha inválidos"
-		LOGGER.error("Email não localizado");
-		throw new UserInvalidoException("Usuário e/ou senha inválidos");
-	    }
+	    validarEmailEPassword(user, userRetorno);
+	    registrarUltimoLogin(userRetorno);
+	    return userRetorno;
 	}
 
     }
 
+    /**
+     * Caso o e-mail e a senha correspondam a um usuário existente, retornar igual
+     * ao endpoint de Criação.
+     * 
+     * @param user
+     * @return {@link User}
+     */
     private User validarEmailPasswordExistente(final User user) {
 	LOGGER.debug("Validar email e senha");
 	final CriteriaBuilder builder = this.em.getCriteriaBuilder();
@@ -78,11 +77,8 @@ public class LoginService implements Serializable {
 	final Root<User> root = query.from(User.class);
 	final List<Predicate> predicates = new ArrayList<>();
 
-	// Caso o e-mail e a senha correspondam a um usuário existente, retornar igual
-	// ao endpoint de Criação.
 	predicates.add(builder.equal(root.get("email"), user.getEmail()));
 	predicates.add(builder.equal(root.get("password"), Utils.encrypt(user.getPassword())));
-
 	query.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));
 
 	final List<User> resultList = this.em.createQuery(query.select(root)).getResultList();
@@ -95,8 +91,16 @@ public class LoginService implements Serializable {
 	}
     }
 
-    private User validarEmailExistente(final User user) {
-	LOGGER.debug("Validar email");
+    /**
+     * Caso o e-mail não exista, retornar erro com status apropriado mais a mensagem
+     * "Usuário e/ou senha inválidos"
+     * 
+     * @param user
+     * @return {@link User}
+     * @throws UserInvalidoException
+     */
+    private User validarEmailExistente(final User user) throws UserInvalidoException {
+	LOGGER.debug("Validar e-mail");
 	final CriteriaBuilder builder = this.em.getCriteriaBuilder();
 	final CriteriaQuery<User> query = builder.createQuery(User.class);
 	final Root<User> root = query.from(User.class);
@@ -111,10 +115,35 @@ public class LoginService implements Serializable {
 	    LOGGER.debug("Email válido");
 	    return resultList.get(0);
 	} else {
-	    return null;
+	    // E-mail não existe
+	    LOGGER.error("Email não localizado");
+	    throw new UserInvalidoException("Usuário e/ou senha inválidos");
 	}
     }
 
+    /**
+     * Caso o e-mail exista mas a senha não bata, retornar o status apropriado 401
+     * mais a mensagem "Usuário e/ou senha inválidos"
+     * 
+     * @param user
+     * @param userRetorno
+     * @throws UserInvalidoException
+     */
+    private void validarEmailEPassword(final User user, User userRetorno) throws UserInvalidoException {
+	if (!StringUtils.equals(Utils.encrypt(user.getPassword()), userRetorno.getPassword())) {
+	    LOGGER.error("Email válido, senha inválida");
+	    throw new UserInvalidoException("Usuário e/ou senha inválidos");
+	}
+
+	LOGGER.debug("Email e senha válidos");
+    }
+
+    /**
+     * Registra o último login do user
+     * 
+     * @param user
+     * @return {@link User}
+     */
     @Transactional(rollbackFor = { Exception.class })
     private User registrarUltimoLogin(final User user) {
 	LOGGER.debug("Registrar data de último login");
