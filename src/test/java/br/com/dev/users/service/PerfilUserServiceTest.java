@@ -24,7 +24,6 @@ import br.com.dev.users.exceptions.SessaoInvalidaException;
 import br.com.dev.users.exceptions.UserInvalidoException;
 import br.com.dev.users.model.User;
 import br.com.dev.users.repository.UserRepository;
-import br.com.dev.users.utilities.Utils;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -64,7 +63,7 @@ public class PerfilUserServiceTest {
     public void testGetPerfilUserComTokenInvalido()
 	    throws UserInvalidoException, SessaoInvalidaException, EmailCadastradoException, CampoInvalidoException {
 	User user = new User();
-	user.setEmail("teste@teste.com.br");
+	user.setEmail("teste@teste1.com.br");
 	user.setPassword("senha123");
 	user.setPhones(new ArrayList<>());
 	user = userService.criar(user);
