@@ -14,12 +14,29 @@ Users creation API
 	http://localhost:8080/users
 	
 	https://users-api-cs.herokuapp.com/users
+	
+	{
+        "name": "João da Silva",
+        "email": "joao@silva.org",
+        "password": "hunter2",
+        "phones": [
+            {
+                "number": "987654321",
+                "ddd": "21"
+            }
+        ]
+    }
 
 ##### POST - Login usuários
 
 	http://localhost:8080/users/login
 	
 	https://users-api-cs.herokuapp.com/users/login
+	
+	{
+        "email": "joao@silva.org",
+        "password": "hunter2"
+    }
 
 ##### POST - Perfil usuários
 
