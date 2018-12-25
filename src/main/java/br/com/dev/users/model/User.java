@@ -13,6 +13,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 public class User implements Serializable {
 
@@ -31,12 +33,15 @@ public class User implements Serializable {
 
     private String password;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     @Temporal(TemporalType.TIMESTAMP)
     private Date modified;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLogin;
 
